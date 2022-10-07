@@ -4,8 +4,20 @@ import {GraphQLServer} from 'graphql-yoga'
 //Type Definitions (schema) // Field(name of table) || Type is like a for example string
 const typeDefs = `
     type Query {
-        hello: String
-        name: String
+        me: User!
+
+
+        id: ID!
+        name: String!
+        age: Int!
+        employed: Boolean!
+    },
+
+    type User {
+        id: ID!
+        name: String!
+        email: String!
+        age: Int
     }
 `
 
@@ -14,11 +26,30 @@ const typeDefs = `
 
 const resolvers = {
     Query: {    // not sure but probably type from the def types and resolvers need to match
-        hello(){ // the name from the def types and resolvers need to match
-            return 'Welcome today we gonan learn some graphQL'
-        } ,
-        name(){
+
+        me() { 
+            return {
+                id: "1",
+                name: "Tomasz PRazniewski",
+                email: "tprazniewski@gmail.com",
+                age: 33
+            }
+        },
+
+
+
+
+        id() {
+            return '1'
+        },
+        name() {
             return 'Tomasz Prazniewski'
+        },
+        age() {
+            return 33
+        },
+        employed() {
+            return false
         }
     }
 }
