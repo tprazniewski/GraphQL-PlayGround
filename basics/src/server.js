@@ -4,13 +4,9 @@ import {GraphQLServer} from 'graphql-yoga'
 //Type Definitions (schema) // Field(name of table) || Type is like a for example string
 const typeDefs = `
     type Query {
+        greeting(name: String, surname: String): String!
         me: User!
-
-
-        id: ID!
-        name: String!
-        age: Int!
-        employed: Boolean!
+        post: Post!
     },
 
     type User {
@@ -18,14 +14,18 @@ const typeDefs = `
         name: String!
         email: String!
         age: Int
+    },
+    type Post {
+        id:ID!
+        title: String!
+        body: String!
+        published: Boolean!
     }
 `
 
-
-//Resolvers // set of functions
-
 const resolvers = {
-    Query: {    // not sure but probably type from the def types and resolvers need to match
+    Query: {    
+        greeting(parent, args, ctx,info){ return `helllo ${args.name} ${args.surname} `},
 
         me() { 
             return {
@@ -35,21 +35,13 @@ const resolvers = {
                 age: 33
             }
         },
-
-
-
-
-        id() {
-            return '1'
-        },
-        name() {
-            return 'Tomasz Prazniewski'
-        },
-        age() {
-            return 33
-        },
-        employed() {
-            return false
+        post() {
+            return {
+                id: "1",
+                title: "First Poast ",
+                body: " This is the first body section",
+                published: false
+            }
         }
     }
 }
