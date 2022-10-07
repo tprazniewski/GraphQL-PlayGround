@@ -1,15 +1,39 @@
 import {GraphQLServer} from 'graphql-yoga'
 
 
+const users = [
+    {
+        id: 1,
+        name: 'Tomasz',
+        email: "Prazniewski@wp.pl",
+        age: 33
+    },
+    {
+        id: 2,
+        name: 'Rob',
+        email: "robcio@wp.pl",
+        age: 22
+    },
+    {
+        id: 1,
+        name: 'Michal',
+        email: "Mich@wp.pl",
+        age: 28
+    },
+]
+
 //Type Definitions (schema) // Field(name of table) || Type is like a for example string
 const typeDefs = `
     type Query {
+        users(nameFiltr:String): [User!]!
+        me: User!
+        post: Post!
+
+
         greeting(name: String, surname: String): String!
         sum(num1: Int!, num2: Int!): Int!
         add(numbers: [Int!]): Int!
-        grades:[Int!]!
-        me: User!
-        post: Post!
+        grades:[Int!]!  
     },
 
     type User {
@@ -28,16 +52,11 @@ const typeDefs = `
 
 const resolvers = {
     Query: {
-        add(parent,args,ctx,info) {
-            if(args.numbers.length === 0){
-                return 0
+        users(parent,args,ctx,info) { 
+            if(!args.nameFiltr){
+                return users 
             }
-            return args.numbers.reduce((acc,cur) => acc+cur)
-        },   
-        sum(parent, args, ctx,info)  { return args.num1 + args.num2},
-        greeting(parent, args, ctx,info){ return `helllo ${args.name} ${args.surname} `},
-        grades(parent,args,ctx,info) {
-            return [1,2,3,4,5,6,7,8,9]
+            return users.filter((user) => user.name.toLocaleLowerCase().includes(args.nameFiltr.toLocaleLowerCase()))
         },
         me() { 
             return {
@@ -54,7 +73,22 @@ const resolvers = {
                 body: " This is the first body section",
                 published: false
             }
+        },
+
+
+
+        add(parent,args,ctx,info) {
+            if(args.numbers.length === 0){
+                return 0
+            }
+            return args.numbers.reduce((acc,cur) => acc+cur)
+        },   
+        sum(parent, args, ctx,info)  { return args.num1 + args.num2},
+        greeting(parent, args, ctx,info){ return `helllo ${args.name} ${args.surname} `},
+        grades(parent,args,ctx,info) {
+            return [1,2,3,4,5,6,7,8,9]
         }
+
     }
 }
 
