@@ -15,7 +15,7 @@ const users = [
         age: 22
     },
     {
-        id: 1,
+        id: 3,
         name: 'Michal',
         email: "Mich@wp.pl",
         age: 28
@@ -27,19 +27,22 @@ const posts = [
         id:1,
         title: "First title",
         body: "First  text",
-        published: false
+        published: false,
+        author: 3
     },
     {
         id:2,
         title: "second title",
         body: "second Body text",
-        published: true
+        published: true,
+        author: 2
     },
     {
         id:3,
         title: "Third title",
         body: "Third Body text",
-        published: false
+        published: false,
+        author: 1
     },
 ]
 
@@ -69,6 +72,7 @@ const typeDefs = `
         title: String!
         body: String!
         published: Boolean!
+        author: User!
     }
 `
 
@@ -122,6 +126,14 @@ const resolvers = {
             return [1,2,3,4,5,6,7,8,9]
         }
 
+    },
+    Post: {
+        author(parent,args,ctx,info) {
+            return users.find((user) => {
+                console.log(user.id,parent.author )
+                return user.id === parent.author
+            })
+        }
     }
 }
 
