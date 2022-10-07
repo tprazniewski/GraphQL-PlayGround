@@ -22,10 +22,32 @@ const users = [
     },
 ]
 
+const posts = [
+    {
+        id:1,
+        title: "First title",
+        body: "First  text",
+        published: false
+    },
+    {
+        id:2,
+        title: "second title",
+        body: "second Body text",
+        published: true
+    },
+    {
+        id:3,
+        title: "Third title",
+        body: "Third Body text",
+        published: false
+    },
+]
+
 //Type Definitions (schema) // Field(name of table) || Type is like a for example string
 const typeDefs = `
     type Query {
         users(nameFiltr:String): [User!]!
+        posts(titleBodyFiltr:String): [Post!]!
         me: User!
         post: Post!
 
@@ -52,6 +74,17 @@ const typeDefs = `
 
 const resolvers = {
     Query: {
+        posts(parent,args,ctx,info) {
+            if(!args.titleBodyFiltr){
+                return posts
+            }
+            return posts.filter((post) => {
+                const isTitleMatch = post.title.toLocaleLowerCase().includes(args.titleBodyFiltr.toLowerCase())
+                const isBodyMatch = post.body.toLocaleLowerCase().includes(args.titleBodyFiltr.toLowerCase())
+                return isTitleMatch || isBodyMatch
+            }
+            )
+        },
         users(parent,args,ctx,info) { 
             if(!args.nameFiltr){
                 return users 
