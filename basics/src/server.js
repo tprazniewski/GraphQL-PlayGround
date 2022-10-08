@@ -3,28 +3,32 @@ import {GraphQLServer} from 'graphql-yoga'
 const comments = [
     {
         id: 1,
-        text: "This is a first comment"
+        text: "This is a first comment",
+        author: 3
     },
     {
         id: 2,
-        text: "This is a second comment"
+        text: "This is a second comment",
+        author: 2
     },
     {
         id: 3,
-        text: "This is a third  text"
+        text: "This is a third  text",
+        author: 1
     },
     {
         id: 4,
-        text: "This is a fourth text"
+        text: "This is a fourth text",
+        author: 3
     }
 ]
+
 const users = [
     {
         id: 1,
         name: 'Tomasz',
         email: "Prazniewski@wp.pl",
-        age: 33
-    },
+        age: 33    },
     {
         id: 2,
         name: 'Rob',
@@ -52,7 +56,7 @@ const posts = [
         title: "second title",
         body: "second Body text",
         published: true,
-        author: 2
+        author: 3
     },
     {
         id:3,
@@ -70,6 +74,7 @@ const typeDefs = `
         posts(titleBodyFiltr:String): [Post!]!
         me: User!
         post: Post!
+        comments: [Comment!]!
 
 
         greeting(name: String, surname: String): String!
@@ -83,7 +88,8 @@ const typeDefs = `
         name: String!
         email: String!
         age: Int
-        posts: [Post]!
+        posts: [Post!]!
+        comments: [Comment!]!
     },
     type Post {
         id:ID!
@@ -91,15 +97,20 @@ const typeDefs = `
         body: String!
         published: Boolean!
         author: User!
+
     },
-    type Coment {
+    type Comment {
         id: ID!
-        test: String!
+        text: String!
+        author: User!
     }
 `
 
 const resolvers = {
     Query: {
+        comments(parent,argx,ctx,info) {
+            return comments
+        },
         posts(parent,args,ctx,info) {
             if(!args.titleBodyFiltr){
                 return posts
@@ -151,7 +162,7 @@ const resolvers = {
     },
     Post: {
         author(parent,args,ctx,info) {
-            return users.find((user) => {
+            return users.filter((user) => {
                 console.log(user.id,parent.author )
                 return user.id === parent.author
             })
@@ -159,8 +170,16 @@ const resolvers = {
     },
     User: {
         posts(parent,args,ctx,info) {
-            return posts.filter((post) => {
-                return post.author=== parent.id
+            return posts.filter((post) => post.author=== parent.id)
+        },
+        comments(parent,args,ctx,info) {
+            return comments.filter((comment) => comment.author === parent.id)
+        }
+    },
+    Comment: {
+        author(parent,args,ctx,info) {
+            return users.find((user) => {
+                return user.id=== parent.author
             })
         }
     }
