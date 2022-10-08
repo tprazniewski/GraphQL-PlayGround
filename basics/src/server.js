@@ -4,22 +4,27 @@ const comments = [
     {
         id: 1,
         text: "This is a first comment",
-        author: 3
+        author: 3,
+        post: 1
     },
     {
         id: 2,
         text: "This is a second comment",
-        author: 2
+        author: 2,
+        post: 3
     },
     {
         id: 3,
         text: "This is a third  text",
-        author: 1
+        author: 1,
+        post: 3
     },
     {
         id: 4,
         text: "This is a fourth text",
-        author: 3
+        author: 3,
+        post: 1
+        
     }
 ]
 
@@ -103,6 +108,8 @@ const typeDefs = `
         id: ID!
         text: String!
         author: User!
+        post: Post!
+        
     }
 `
 
@@ -180,6 +187,12 @@ const resolvers = {
         author(parent,args,ctx,info) {
             return users.find((user) => {
                 return user.id=== parent.author
+            })
+        },
+        post(parent,argx,ctx,info) {
+            return posts.find((post) => {
+                console.log(post.id, parent.post)
+                return post.id === parent.post
             })
         }
     }
