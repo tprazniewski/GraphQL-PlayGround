@@ -1,6 +1,23 @@
 import {GraphQLServer} from 'graphql-yoga'
 
-
+const comments = [
+    {
+        id: 1,
+        text: "This is a first comment"
+    },
+    {
+        id: 2,
+        text: "This is a second comment"
+    },
+    {
+        id: 3,
+        text: "This is a third  text"
+    },
+    {
+        id: 4,
+        text: "This is a fourth text"
+    }
+]
 const users = [
     {
         id: 1,
@@ -74,6 +91,10 @@ const typeDefs = `
         body: String!
         published: Boolean!
         author: User!
+    },
+    type Coment {
+        id: ID!
+        test: String!
     }
 `
 
