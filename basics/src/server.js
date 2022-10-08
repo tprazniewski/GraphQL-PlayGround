@@ -1,4 +1,5 @@
 import {GraphQLServer} from 'graphql-yoga'
+import { uuid } from 'uuidv4';
 
 const comments = [
     {
@@ -33,7 +34,8 @@ const users = [
         id: 1,
         name: 'Tomasz',
         email: "Prazniewski@wp.pl",
-        age: 33    },
+        age: 33
+        },
     {
         id: 2,
         name: 'Rob',
@@ -48,6 +50,10 @@ const users = [
     },
 ]
 
+const number = () => {
+    return users[users.length-1].id+1   
+    
+}
 const posts = [
     {
         id:1,
@@ -87,6 +93,10 @@ const typeDefs = `
         add(numbers: [Int!]): Int!
         grades:[Int!]!  
     },
+    
+    type Mutation {
+        createUser(name:String!, email:String!,age: Int): User!
+    }, 
 
     type User {
         id: ID!
@@ -168,6 +178,23 @@ const resolvers = {
         }
 
     },
+    Mutation: {
+        createUser(parent,args,ctx,info) {
+            const emailTaken = users.some((user)=> user.email === args.email )
+
+            if(emailTaken) throw new Error('Email is taken')
+            const user = {
+                id: number(),
+                name: args.name,
+                email: args.email,
+                age: args.age
+            }
+
+            users.push(user)
+            return user
+        }
+    },
+
     Post: {
         author(parent,args,ctx,info) {
             return users.filter((user) => {
