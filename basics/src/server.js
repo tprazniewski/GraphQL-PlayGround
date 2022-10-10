@@ -1,6 +1,11 @@
 import {GraphQLServer} from 'graphql-yoga'
 import { uuid } from 'uuidv4';
 
+const rdmNumber = (array) => {
+    return array[array.length-1].id+1   
+    
+}
+
 const comments = [
     {
         id: 1,
@@ -50,21 +55,15 @@ const users = [
     },
 ]
 
-const number = () => {
-    return users[users.length-1].id+1   
-    
-}
-const numberPost = () => {
-    return posts[posts.length-1].id+1   
-    
-}
+
+
 
 const posts = [
     {
         id:1,
         title: "First title",
         body: "First  text",
-        published: false,
+        published: true,
         author: 3
     },
     {
@@ -101,7 +100,9 @@ const typeDefs = `
     
     type Mutation {
         createUser(name:String!, email:String!,age: Int): User!
-        createPost(title:String!,body:String!,published: Boolean, author: ID!) :Post!
+        createPost(title:String!,body:String!,published: Boolean, author: ID!): Post!
+        createComment(text:String!, author:ID!, post:ID!): Comment!
+
     }, 
 
     type User {
@@ -190,7 +191,7 @@ const resolvers = {
 
             if(emailTaken) throw new Error('Email is taken')
             const user = {
-                id: number(),
+                id: rdmNumber(users),
                 name: args.name,
                 email: args.email,
                 age: args.age
@@ -204,7 +205,7 @@ const resolvers = {
             if(!userExists) throw new Error(`This user doesn't exist`)
 
             const post = {
-                id: numberPost(),
+                id: rdmNumber(posts),
                 title: args.title,
                 body: args.body,
                 published: args.published,
@@ -212,6 +213,22 @@ const resolvers = {
             }
             posts.push(post)
             return post
+        },
+        createComment(parent,args,ctx,info) {
+
+            const userExists = users.some((user)=> user.id == args.author)
+            const postExists = posts.some((post) => post.id == args.post && post.published)
+ 
+            if(!userExists || !postExists) throw new Error('unable to find user and post')
+
+            const comment = {
+                id: rdmNumber(comments),
+                text: args.text,
+                author: Number(args.author),
+                post: Number(args.post)
+            }
+            comments.push(comment)
+            return comment
         }
     },
 
