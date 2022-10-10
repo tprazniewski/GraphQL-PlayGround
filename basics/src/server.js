@@ -187,14 +187,16 @@ const resolvers = {
     },
     Mutation: {
         createUser(parent,args,ctx,info) {
+            
             const emailTaken = users.some((user)=> user.email === args.email )
 
             if(emailTaken) throw new Error('Email is taken')
             const user = {
                 id: rdmNumber(users),
-                name: args.name,
-                email: args.email,
-                age: args.age
+                // name: args.name,
+                // email: args.email,
+                // age: args.age
+                ...args
             }
 
             users.push(user)
