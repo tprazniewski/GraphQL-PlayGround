@@ -54,6 +54,11 @@ const number = () => {
     return users[users.length-1].id+1   
     
 }
+const numberPost = () => {
+    return posts[posts.length-1].id+1   
+    
+}
+
 const posts = [
     {
         id:1,
@@ -96,6 +101,7 @@ const typeDefs = `
     
     type Mutation {
         createUser(name:String!, email:String!,age: Int): User!
+        createPost(title:String!,body:String!,published: Boolean, author: ID!) :Post!
     }, 
 
     type User {
@@ -192,13 +198,26 @@ const resolvers = {
 
             users.push(user)
             return user
+        },
+        createPost(parent,args,ctx,info){
+            const userExists = users.some((user) => user.id == args.author )
+            if(!userExists) throw new Error(`This user doesn't exist`)
+
+            const post = {
+                id: numberPost(),
+                title: args.title,
+                body: args.body,
+                published: args.published,
+                author: Number(args.author)
+            }
+            posts.push(post)
+            return post
         }
     },
 
     Post: {
         author(parent,args,ctx,info) {
-            return users.filter((user) => {
-                console.log(user.id,parent.author )
+            return users.find((user) => {
                 return user.id === parent.author
             })
         },
